@@ -12,8 +12,14 @@ Modelo de sistema completo utilizando Docker, integrado com Django, Nginx e Post
 
 Acesse o painel do Nginx em http://localhost:81 e faça login com o usuário e senha abaixo:
 
-Usuário: admin@example.com
-Senha: changeme
+Usuário:
+```
+admin@example.com
+```
+Senha:
+```
+changeme
+```
 
 No painel do sistema, vá até Hosts > Proxy Hosts.
 
