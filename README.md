@@ -10,6 +10,7 @@ Você pode alterar os nomes dos containers e volumes diretamente no arquivo `doc
 ## 🐍 Configuração do Django
 - Crie seu projeto Django normalmente.  
 - Utilize a **app** existente como core ou crie um novo app chamado **app** para servir como núcleo do sistema.
+- Com `DEBUG=False` o Django roda com o Gunicorn que esta configurado no arquivo `gunicorn_config.py` e se conecta no Nginx posteriormente.
 
 ---
 
@@ -37,11 +38,15 @@ else:
         }
     }
 ```
+
+> ⚠️ **Segurança:**  
+> Adicione o arquivo **.env** ao **.gitignore** do seu projeto real para **não expor variáveis sensíveis de produção** no GitHub.
+
 ---
 
 ## 🌐 Configuração do Nginx
 
-Acesse o painel do Nginx em [http://localhost:81](http://localhost:81) e faça login com o usuário e senha abaixo:
+Acesse o painel do Nginx em [http://localhost:81](http://localhost:81) e faça login com o usuário e senha abaixo (usuário e senha padrão):
 
 Usuário:
 ```
