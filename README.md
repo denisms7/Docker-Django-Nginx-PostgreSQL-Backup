@@ -1,16 +1,16 @@
 # Docker + Django + Nginx + PostgreSQL – Sistema com Backup
 
-Modelo de sistema completo utilizando Docker, integrado com Django, Nginx e PostgreSQL, incluindo funcionalidades de backup automatizado e configuração pronta para desenvolvimento e produção.
+Modelo de sistema completo utilizando **Docker**, integrado com **Django**, **Nginx** e **PostgreSQL**, incluindo funcionalidades de **backup automatizado** e configuração pronta para desenvolvimento e produção.
 
-### Configuração do Docker
+## 🐳 Configuração do Docker
 
-### Configuração do Django
+## 🐍 Configuração do Django
 
-### Configuração do PostgreSQL
+## 🗄️ Configuração do PostgreSQL
 
-### Configuração do Nginx
+## 🌐 Configuração do Nginx
 
-Acesse o painel do Nginx em http://localhost:81 e faça login com o usuário e senha abaixo:
+Acesse o painel do Nginx em [http://localhost:81](http://localhost:81) e faça login com o usuário e senha abaixo:
 
 Usuário:
 ```
@@ -21,17 +21,18 @@ Senha:
 changeme
 ```
 
-No painel do sistema, vá até Hosts > Proxy Hosts.
+No painel do sistema, siga os passos:
 
-Clique em Add Proxy Host.
+1. Vá até **Hosts > Proxy Hosts**.  
+2. Clique em **Add Proxy Host**.  
+3. Em **Domain Names**, insira seu **DNS ou IP**.  
+4. Em **Forward Hostname/IP**, coloque o **nome do container Docker** onde o Django está rodando.  
+5. Em **Forward Port**, informe a **porta do Django** (exemplo: `8000`).  
 
-Em Domain Names, insira seu DNS ou IP.
+### 🔧 Configuração Avançada
 
-Em Forward Hostname/IP, coloque o nome do container Docker onde o Django está rodando.
+Expanda a seção **Advanced** e adicione o seguinte código para configurar os diretórios de arquivos estáticos e de mídia:
 
-Em Forward Port, informe a porta que o Django está utilizando (no exemplo, 8000).
-
-Expanda a seção Advanced e adicione o seguinte código para configurar os diretórios de arquivos estáticos e mídia:
 ```
 location /static/ {
     alias /var/www/staticfiles/;
