@@ -3,10 +3,41 @@
 Modelo de sistema completo utilizando **Docker**, integrado com **Django**, **Nginx** e **PostgreSQL**, incluindo funcionalidades de **backup automatizado** e configuração pronta para desenvolvimento e produção.
 
 ## 🐳 Configuração do Docker
+Você pode alterar os nomes dos containers e volumes diretamente no arquivo `docker-compose.yml` conforme suas necessidades.
+
+---
 
 ## 🐍 Configuração do Django
+- Crie seu projeto Django normalmente.  
+- Utilize a **app** existente como core ou crie um novo app chamado **app** para servir como núcleo do sistema.
+
+---
 
 ## 🗄️ Configuração do PostgreSQL
+- Altere os nomes das variáveis de ambiente no arquivo **.env** conforme sua configuração.  
+- O `settings.py` está configurado para usar **SQLite** quando `DEBUG=True` e **PostgreSQL** quando `DEBUG=False`, extraindo os dados do arquivo **.env**:
+
+```python
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'HOST': os.getenv('POSTGRES_HOST', 'postgres-db'),
+            'PORT': os.getenv('POSTGRES_PORT', '5432'),
+            'NAME': os.getenv('POSTGRES_DB', 'postgres'),
+            'USER': os.getenv('POSTGRES_USER', 'postgres'),
+            'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'postgres'),
+        }
+    }
+```
+---
 
 ## 🌐 Configuração do Nginx
 
@@ -50,3 +81,18 @@ location /media/ {
 ```
 
 Isso garante que os arquivos estáticos (/static/) e de mídia (/media/) sejam servidos corretamente pelo Nginx, com cache otimizado.
+
+---
+
+## 💾 Configuração do Backup
+O backup do banco de dados, pasta de mídia e volumes é realizado diariamente às 03:00, conforme definido no arquivo **entrypoint.sh**: 
+
+```
+# Cria crontab do zero
+cat > /etc/cron.d/backup-cron << 'CRONTAB'
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+0 3 * * * root /backup/run-backup.sh >> /backup/backup.log 2>&1
+```
+Certifique-se de que o script /backup/run-backup.sh está configurado corretamente caso faca alteracao para copiar bancos de dados e volumes.
