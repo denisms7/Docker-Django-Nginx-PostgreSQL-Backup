@@ -81,11 +81,11 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('POSTGRES_DB', 'changeme'),
-            'USER': os.getenv('POSTGRES_USER', 'changeme'),
-            'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'changeme'),
             'HOST': os.getenv('POSTGRES_HOST', 'postgres-db'),
-            'PORT': os.getenv('POSTGRES_PORT', 'changeme'),
+            'PORT': os.getenv('POSTGRES_PORT', '5432'),
+            'NAME': os.getenv('POSTGRES_DB', 'postgres'),
+            'USER': os.getenv('POSTGRES_USER', 'postgres'),
+            'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'postgres'),
         }
     }
 
@@ -127,12 +127,7 @@ DEFAULT_CHARSET = 'utf-8'
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
-]
-
 
 # Configuração da pasta de mídia
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
