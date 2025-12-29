@@ -1,0 +1,48 @@
+# Ignorar arquivos de ambiente
+.env
+*.env
+.env.*
+
+# Ignorar dependências locais
+node_modules/
+venv/
+env/
+.venv/
+.env/
+
+# Ignorar arquivos temporários e caches
+*.swp
+*.bak
+*.tmp
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignorar arquivos SQLite e bancos
+*.sqlite3
+*.db
+
+# Ignorar arquivos de log
+*.log
+
+# Ignorar arquivos estáticos gerados
+staticfiles/
+media/
+
+# Ignorar arquivos de build e distribuição
+build/
+dist/
+*.egg-info/
+
+# Ignorar arquivos de controle de versão
+.git/
+.gitignore
+
+# Ignorar arquivos Docker
+.dockerignore
+Dockerfile*
+docker-compose*
+
+# Ignorar arquivos do sistema
+.DS_Store
+Thumbs.db
