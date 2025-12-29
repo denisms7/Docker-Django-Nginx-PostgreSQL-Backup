@@ -104,15 +104,20 @@ Isso garante que os arquivos estáticos (/static/) e de mídia (/media/) sejam s
 
 ---
 
-## 💾 Configuração do Backup
-O backup do banco de dados, pasta de mídia e volumes é realizado diariamente às 03:00, conforme definido no arquivo **entrypoint.sh**: 
+## 💾 Backup do PostgreSQL
+O backup do banco de dados é realizado diariamente às 03:00 (horário de Brasília), utilizando agendamento via cron dentro do container Docker.
 
 ```
-# Cria crontab do zero
-cat > /etc/cron.d/backup-cron << 'CRONTAB'
-SHELL=/bin/bash
-PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-
-0 3 * * * root /backup/run-backup.sh >> /backup/backup.log 2>&1
+SCHEDULE: "0 3 * * *"   # todos os dias às 03:00
+BACKUP_KEEP_DAYS: 7
+BACKUP_KEEP_WEEKS: 4
+BACKUP_KEEP_MONTHS: 4
 ```
-Certifique-se de que o script /backup/run-backup.sh está configurado corretamente caso faca alteracao para copiar bancos de dados e volumes.
+
+### 🗂️ Política de Retenção
+- Diário: mantém os backups dos últimos 7 dias.
+- Semanal: mantém 1 backup por semana das últimas 4 semanas.
+- Mensal: mantém 1 backup por mês dos últimos 4 meses.
+
+Link da imagem de backup do PostgresSQL:
+[https://hub.docker.com/r/prodrigestivill/postgres-backup-local](postgres-backup-local)
