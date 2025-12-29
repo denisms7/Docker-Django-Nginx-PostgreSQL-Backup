@@ -4,6 +4,21 @@ Modelo de sistema completo utilizando **Docker**, integrado com **Django**, **Ng
 
 ## 🐳 Configuração do Docker
 Você pode alterar os nomes dos containers e volumes diretamente no arquivo `docker-compose.yml` conforme suas necessidades.
+Para criar os containers, utilize o comando:
+
+```
+docker-compose build --no-cache
+```
+- docker-compose build: cria as imagens dos containers definidas no docker-compose.yml.
+- no-cache: força o Docker a ignorar o cache e reconstruir a imagem do zero, útil se você fez alterações em arquivos ou dependências e quer garantir que elas sejam aplicadas.
+
+Para executar os containers, utilize:
+```
+docker-compose up
+```
+
+- docker-compose up: inicia todos os containers definidos no docker-compose.yml.
+- Se as imagens ainda não existirem, o Docker vai tentar construí-las automaticamente antes de iniciar os containers.
 
 ---
 
