@@ -120,4 +120,4 @@ BACKUP_KEEP_MONTHS: 4
 - Mensal: mantém 1 backup por mês dos últimos 4 meses.
 
 Link da imagem de backup do PostgresSQL:
-[https://hub.docker.com/r/prodrigestivill/postgres-backup-local](postgres-backup-local)
+[postgres-backup-local](https://hub.docker.com/r/prodrigestivill/postgres-backup-local)
