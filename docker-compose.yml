@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   nginx-proxy:
     container_name: nginx-proxy
@@ -6,15 +8,15 @@ services:
     ports:
       - '80:80'
       - '443:443'
-      - '81:81'
+      - '127.0.0.1:81:81'  # ✓ Apenas localhost (segurança)
     volumes:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
-      - ./staticfiles:/var/www/staticfiles/
+      - ./staticfiles:/var/www/staticfiles:ro  # Read-only
     networks:
       - nginx-network
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost || exit 1"]
+      test: ["CMD", "/bin/check-health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -23,26 +25,34 @@ services:
     container_name: django-app
     build: .
     restart: always
-    #ports:  # expor a porta 8000 para a rede local e externamente
-    #  - "8000:8000"
+    expose:  # Melhor que ports para serviços internos
+      - "8000"
     volumes:
       - ./:/app
       - ./staticfiles:/app/staticfiles
-      - ./staticfiles:/staticfiles
-      - media:/app/media
+      - ./media:/app/media  # ✓ Bind mount para mídia (acesso direto)
+
     env_file:
       - .env
     networks:
       - nginx-network
     depends_on:
-      - postgres-db
-      - nginx-proxy
+      postgres-db:
+        condition: service_healthy
+      nginx-proxy:
+        condition: service_started
     command: >
       sh -c "
         python manage.py migrate &&
         python manage.py collectstatic --noinput &&
         gunicorn --config gunicorn_config.py app.wsgi:application
       "
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   postgres-db:
     container_name: ${POSTGRES_HOST}
@@ -54,43 +64,60 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - nginx-network
+    expose:
+      - "5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
-      interval: 30s
-      timeout: 10s
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
       retries: 5
 
   postgres-backup:
     image: prodrigestivill/postgres-backup-local:latest
     container_name: postgres-backup
     depends_on:
-      - postgres-db
+      postgres-db:
+        condition: service_healthy
     environment:
       POSTGRES_HOST: ${POSTGRES_HOST}
-      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
       TZ: America/Sao_Paulo
-      SCHEDULE: "0 3 * * *"   # todos os dias às 03:00
+      SCHEDULE: "0 3 * * *"
       BACKUP_KEEP_DAYS: 7
       BACKUP_KEEP_WEEKS: 4
       BACKUP_KEEP_MONTHS: 4
-      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT:-8080}
     volumes:
       - backup:/backups
     restart: always
-    ports:
-      - "${HEALTHCHECK_PORT}:${HEALTHCHECK_PORT}"  # Expor porta HEALTHCHECK_PORT
+    expose:
+      - "${HEALTHCHECK_PORT:-8080}"
+    networks:
+      - nginx-network
+
+  midia-backup:
+    image: fdrake/rsync-cron:latest
+    container_name: midia-backup
+    volumes:
+      - ./media:/data/source:ro
+      - backup:/data/backup
+    environment:
+      CRON: "0 3 * * *"
+      RSYNC_SOURCE: "/data/source/"
+      RSYNC_DEST: "/data/backup/midia/"
+      RSYNC_OPTIONS: "-av --delete"
+      TZ: America/Sao_Paulo
+    restart: always
     networks:
       - nginx-network
 
 networks:
   nginx-network:
     driver: bridge
-    attachable: true
 
 volumes:
   postgres_data:
-  media:
   backup:
